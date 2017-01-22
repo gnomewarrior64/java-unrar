@@ -18,8 +18,7 @@
  */
 package de.innosystec.unrar.rarfile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
 
 import de.innosystec.unrar.io.Raw;
 
@@ -31,7 +30,7 @@ import de.innosystec.unrar.io.Raw;
  */
 public class MarkHeader extends BaseBlock {
 	
-	private Log logger = LogFactory.getLog(MarkHeader.class.getName());
+	private final Logger logger = Logger.getLogger(MarkHeader.class.getName());
 	private boolean oldFormat = false;
 	
 	public MarkHeader(BaseBlock bb){

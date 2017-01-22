@@ -18,15 +18,14 @@
  */
 package de.innosystec.unrar.rarfile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
 
 import de.innosystec.unrar.io.Raw;
 
 public class SubBlockHeader 
 extends BlockHeader 
 {
-	private Log logger = LogFactory.getLog(getClass());
+	private final Logger logger = Logger.getLogger(SubBlockHeader.class.getName());
 	
 	public static final short SubBlockHeaderSize = 3;
 	

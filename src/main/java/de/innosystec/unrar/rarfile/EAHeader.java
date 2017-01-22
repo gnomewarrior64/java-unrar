@@ -18,8 +18,7 @@
  */
 package de.innosystec.unrar.rarfile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
 
 import de.innosystec.unrar.io.Raw;
 
@@ -30,7 +29,7 @@ import de.innosystec.unrar.io.Raw;
 public class EAHeader 
 extends SubBlockHeader 
 {
-	private Log logger = LogFactory.getLog(getClass());
+	private final Logger logger = Logger.getLogger(EAHeader.class.getName());
 	
 	public static final short EAHeaderSize = 10;
 	

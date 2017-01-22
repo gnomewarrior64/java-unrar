@@ -18,8 +18,7 @@
  */
 package de.innosystec.unrar.rarfile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
 
 import de.innosystec.unrar.io.Raw;
 
@@ -32,7 +31,7 @@ import de.innosystec.unrar.io.Raw;
  */
 public class BaseBlock{
 	
-	Log logger = LogFactory.getLog(BaseBlock.class.getName());
+	private final Logger logger = Logger.getLogger(BaseBlock.class.getName());
 	
 	public static final short BaseBlockSize = 7;
 	
