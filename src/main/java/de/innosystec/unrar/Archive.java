@@ -462,33 +462,40 @@ public class Archive implements Closeable {
 	if (!hd.isSolid()) {
 	    unpack.init(null);
 	}
-	unpack.setDestSize(hd.getFullUnpackSize());
-	try {
-	    unpack.doUnpack(hd.getUnpVersion(), hd.isSolid());
-	    // Verify file CRC
-	    hd = dataIO.getSubHeader();
+	
+	if ( hd.isSplitBefore() == false)
+	{
+		if ( hd.getUnpMethod() == 0x30)
+		{
+			unstoreFile(dataIO, hd.getFullUnpackSize());
+		}
+		else
+		{
+			unpack.setDestSize(hd.getFullUnpackSize());
+			try {
+			    unpack.doUnpack(hd.getUnpVersion(), hd.isSolid());
+			    // Verify file CRC
+			} catch (Exception e) {
+			    unpack.cleanUp();
+			    if (e instanceof RarException) {
+				// throw new RarException((RarException)e);
+				throw (RarException) e;
+			    } else {
+				throw new RarException(e);
+			    }
+			}
+		}
+		
+		hd = dataIO.getSubHeader();
 	    long actualCRC = hd.isSplitAfter() ? ~dataIO.getPackedCRC()
 		    : ~dataIO.getUnpFileCRC();
 	    int expectedCRC = hd.getFileCRC();
 	    if (actualCRC != expectedCRC) {
 		throw new RarException(RarExceptionType.crcError);
 	    }
-	    // if (!hd.isSplitAfter()) {
-	    // // Verify file CRC
-	    // if(~dataIO.getUnpFileCRC() != hd.getFileCRC()){
-	    // throw new RarException(RarExceptionType.crcError);
-	    // }
-	    // }
-	} catch (Exception e) {
-	    unpack.cleanUp();
-	    if (e instanceof RarException) {
-		// throw new RarException((RarException)e);
-		throw (RarException) e;
-	    } else {
-		throw new RarException(e);
-	    }
 	}
     }
+    
 
     /**
      * @return returns the main header of this archive
@@ -513,5 +520,26 @@ public class Archive implements Closeable {
 	if (unpack != null) {
 	    unpack.cleanUp();
 	}
+    }
+    
+    public void unstoreFile(ComprDataIO dataIO, long destUnpSize ) throws RarException {
+    	byte[] Buffer = new byte[0x10000];
+    	while(true) {
+    		try {
+				int Code = dataIO.unpRead(Buffer, 0, Buffer.length);
+				if (Code == 0 || Code == 1)
+				{
+					break;
+				}
+				Code = (Code<destUnpSize) ? Code : (int)destUnpSize;
+				dataIO.unpWrite(Buffer, 0, Code);
+				destUnpSize -= Code;
+			} catch (IOException e) {
+				throw new RarException(RarExceptionType.ioError);
+			} catch (RarException e) {
+				throw e;
+			}
+    		
+    	}
     }
 }
